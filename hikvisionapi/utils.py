@@ -3,7 +3,7 @@ from requests.auth import HTTPBasicAuth
 from lxml import etree
 from collections import OrderedDict
 from io import BytesIO, StringIO
-import dicttoxml
+from xmler import dict2xml as d2xml
 
 
 class HikVisionServer:
@@ -41,7 +41,7 @@ def getXML(server: HikVisionServer, ISAPI, xmldata=None):
 
 def xml2dict(xml):
     # Taken from https://stackoverflow.com/questions/4255277/lxml-etree-xmlparser-remove-unwanted-namespace
-    xslt = b"""<xsl:stylesheet version="1.0" 
+    xslt = b"""<xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="xml" indent="no"/>
 
@@ -98,12 +98,17 @@ def tree2dict(node):
         attribdict = dict()
         for i in node.attrib:
             val = node.attrib[i]
-            attribdict["@" + str(i)] = val
-        subdict.update(attribdict)
+            attribdict[str(i)] = val
+        subdict.update({"@attrs": attribdict})
         return {node.tag: subdict}
     else:
         return {node.tag: node.text}
 
 
 def dict2xml(dictionary):
-    return b"""<?xml version="1.0" encoding="UTF-8" ?>""" + dicttoxml.dicttoxml(dictionary, root=False, attr_type=False)
+    for i in dictionary:
+        dictionary[i]["@attrs"].update(
+            {"xmlns": "http://www.hikvision.com/ver20/XMLSchema"})
+    xml = d2xml(dictionary)
+    return """<?xml version = "1.0" encoding = "UTF-8" ?>""" + str(xml)
+    # return b"""<?xml version="1.0" encoding="UTF-8" ?>""" + dicttoxml.dicttoxml(dictionary, root=False, attr_type=False)

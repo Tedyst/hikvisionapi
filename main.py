@@ -1,3 +1,4 @@
+import xml.dom.minidom
 from hikvisionapi.System import getDeviceInfo
 import hikvisionapi.utils as utils
 
@@ -40,6 +41,6 @@ xmlorig = b"""<?xml version = "1.0" encoding = "UTF-8" ?>
 """
 
 dicti = utils.xml2dict(xmlorig)
-print(dicti)
+# print(dicti)
 new = utils.dict2xml(dicti)
 print(new)
