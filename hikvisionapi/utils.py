@@ -2,7 +2,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from lxml import etree
 from collections import OrderedDict
-from StringIO import StringIO
+from io import BytesIO, StringIO
 
 
 class HikVisionServer:
@@ -39,7 +39,39 @@ def getXML(server: HikVisionServer, ISAPI, xmldata=None):
 
 
 def xml2dict(xml):
-    tree = etree.parse(StringIO(xml))
+    # Taken from https://stackoverflow.com/questions/4255277/lxml-etree-xmlparser-remove-unwanted-namespace
+    xslt = b"""<xsl:stylesheet version="1.0" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output method="xml" indent="no"/>
+
+    <xsl:template match="/|comment()|processing-instruction()">
+        <xsl:copy>
+            <xsl:apply-templates/>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="*">
+        <xsl:element name="{local-name()}">
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="@*">
+        <xsl:attribute name="{local-name()}">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
+    </xsl:template>
+</xsl:stylesheet>
+"""
+
+    xmlstr = BytesIO(xml)
+    parser = etree.XMLParser(ns_clean=True)
+    tree = etree.parse(xmlstr, parser=parser)
+
+    xslt_doc = etree.parse(BytesIO(xslt))
+    transform = etree.XSLT(xslt_doc)
+    tree = transform(tree)
+
     return tree2dict(tree.getroot())
 
 
