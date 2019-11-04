@@ -3,6 +3,7 @@ from requests.auth import HTTPBasicAuth
 from lxml import etree
 from collections import OrderedDict
 from io import BytesIO, StringIO
+import dicttoxml
 
 
 class HikVisionServer:
@@ -94,6 +95,15 @@ def tree2dict(node):
             else:
                 subdict.update(d)
     if subdict:
+        attribdict = dict()
+        for i in node.attrib:
+            val = node.attrib[i]
+            attribdict["@" + str(i)] = val
+        subdict.update(attribdict)
         return {node.tag: subdict}
     else:
         return {node.tag: node.text}
+
+
+def dict2xml(dictionary):
+    return b"""<?xml version="1.0" encoding="UTF-8" ?>""" + dicttoxml.dicttoxml(dictionary, root=False, attr_type=False)
