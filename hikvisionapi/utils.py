@@ -2,6 +2,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from lxml import etree
 from collections import OrderedDict
+from StringIO import StringIO
 
 
 class HikVisionServer:
@@ -38,7 +39,7 @@ def getXML(server: HikVisionServer, ISAPI, xmldata=None):
 
 
 def xml2dict(xml):
-    tree = etree.parse(xml)
+    tree = etree.parse(StringIO(xml))
     return tree2dict(tree.getroot())
 
 
