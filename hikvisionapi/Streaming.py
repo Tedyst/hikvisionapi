@@ -72,7 +72,8 @@ def getChannelRTSP(server: utils.HikVisionServer, ChannelID):
     """
     channel = getChannelByID(server, ChannelID)
     data = utils.xml2dict(channel)
-    if data['StreamingChannel']['Transport']['ControlProtocolList']['ControlProtocol']['streamingTransport'] != "RTSP":
+    control = data['StreamingChannel']['Transport']['ControlProtocolList']
+    if control['ControlProtocol']['streamingTransport'] != "RTSP":
         return ""
     # rtsp://admin:cosica.123@192.168.1.239:554/Streaming/channels/801
     return "rtsp://" + server.user + ":" + server.password + \
@@ -81,7 +82,8 @@ def getChannelRTSP(server: utils.HikVisionServer, ChannelID):
 
 def getPastRecordingsForID(server: utils.HikVisionServer, ChannelID,
                            startTime="", endTime=""):
-    dictdata = utils.xml2dict(b"""<CMSearchDescription version="1.0" xmlns="http://www.isapi.org/ver20/XMLSchema"> 
+    dictdata = utils.xml2dict(b"""<CMSearchDescription version="1.0"
+        xmlns="http://www.isapi.org/ver20/XMLSchema">
         <searchID>{812F04E0-4089-11A3-9A0C-0305E82C2906}</searchID>
         <trackIDList>
         <trackID>9</trackID>
@@ -103,7 +105,9 @@ def getPastRecordingsForID(server: utils.HikVisionServer, ChannelID,
         </metadataList>
         </CMSearchDescription>""")
     dictdata['CMSearchDescription']['trackIDList']['trackID'] = ChannelID
-    dictdata['CMSearchDescription']['timeSpanList']['timeSpan']['startTime'] = startTime
-    dictdata['CMSearchDescription']['timeSpanList']['timeSpan']['endTime'] = endTime
+    (dictdata['CMSearchDescription']['timeSpanList']
+             ['timeSpan']['startTime']) = startTime
+    (dictdata['CMSearchDescription']['timeSpanList']
+             ['timeSpan']['endTime']) = endTime
     data = utils.dict2xml(dictdata)
     return utils.getXML(server, "ContentMgmt/search", data)
