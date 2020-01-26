@@ -28,7 +28,7 @@ for channel in channelList['StreamingChannelList']['StreamingChannel']:
                                                     endtime)
         recordings = hikvisionapi.xml2dict(response)
 
-        # If didn't have any recordings for this channel today
+        # If we didn't have any recordings for this channel today
         if int(recordings['CMSearchResult']['numOfMatches']) == 0:
             continue
 
@@ -40,6 +40,7 @@ for channel in channelList['StreamingChannelList']['StreamingChannel']:
             # You can choose your own filename, this is just an example
             name = re.sub(r'[-T\:Z]', '', recording['timeSpan']['startTime'])
             name = name + ".mkv"
+
             print("Started downloading ", name)
             hikvisionapi.RTSPutils.downloadRTSP(url, name,
                                                 debug=True, force=True)
