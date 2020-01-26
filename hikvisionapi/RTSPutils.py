@@ -4,9 +4,15 @@ import os
 
 def downloadRTSP(url, videoName, seconds=9999999, debug=False, force=False):
     """
-    Downloads an RTSP livestream to a specific location.
+    Downloads an RTSP livestream from url to videoName.
+
+    Parameters:
+        url (str): the RTSP link to a stream
+        videoName (str): the filename of the downloaded stream
+        seconds (int): the maximum number of seconds that should be recorded
     """
-    print("Trying to download from: " + url)
+    if debug:
+        print("Starting download from: " + url)
     stream = ffmpeg.output(ffmpeg.input(url),
                            videoName, vcodec="copy",
                            reorder_queue_size=0, acodec="copy",

@@ -7,21 +7,48 @@ from xmler import dict2xml as d2xml
 
 
 class HikVisionServer:
-    def __init__(self, host, user, password, protocol="http", port=80):
+    """
+    This is a class for storing basic info about a DVR.
+
+    Parameters:
+        host (str): The host address, without `http` or `https`
+        user (str): The username for the DVR
+        password (str): The password
+        protocol (str): The intended protocol
+                        Should be `http`(default) or `https`
+    """
+    def __init__(self, host, user, password, protocol="http"):
         self.host = host
         self.protocol = protocol
-        self.port = port
         self.user = user
         self.password = password
 
     def address(self):
+        """
+        This returns the formatted address of the DVR, but
+        without pre-added http auth credentials in the URL
+        """
         return self.protocol + "://" + self.host + "/ISAPI/"
 
     def hostWithAuth(self):
+        """
+        This returns the formatted address of the DVR
+        with pre-added http auth credentials in the URL
+        """
         return self.user + ":" + self.password + "@" + self.host
 
 
 def getXML(server: HikVisionServer, path, xmldata=None):
+    """
+    This returns the response of the DVR to the following GET request
+
+    Parameters:
+        server (HikvisionServer): The basic info about the DVR
+        path (str): The ISAPI path that will be executed
+        xmldata (str): This should be formatted using `utils.dict2xml`
+                       This is the data that will be transmitted to the server.
+                       It is optional.
+    """
     headers = {'Content-Type': 'application/xml'}
     if xmldata is None:
         responseRaw = requests.get(
@@ -41,6 +68,16 @@ def getXML(server: HikVisionServer, path, xmldata=None):
 
 
 def putXML(server: HikVisionServer, path, xmldata=None):
+    """
+    This returns the response of the DVR to the following PUT request
+
+    Parameters:
+        server (HikvisionServer): The basic info about the DVR
+        path (str): The ISAPI path that will be executed
+        xmldata (str): This should be formatted using `utils.dict2xml`
+                       This is the data that will be transmitted to the server.
+                       It is optional.
+    """
     headers = {'Content-Type': 'application/xml'}
     if xmldata is None:
         responseRaw = requests.put(
@@ -60,6 +97,16 @@ def putXML(server: HikVisionServer, path, xmldata=None):
 
 
 def deleteXML(server: HikVisionServer, path, xmldata=None):
+    """
+    This returns the response of the DVR to the following DELETE request
+
+    Parameters:
+        server (HikvisionServer): The basic info about the DVR
+        path (str): The ISAPI path that will be executed
+        xmldata (str): This should be formatted using `utils.dict2xml`
+                       This is the data that will be transmitted to the server.
+                       It is optional.
+    """
     headers = {'Content-Type': 'application/xml'}
     if xmldata is None:
         responseRaw = requests.delete(
@@ -79,6 +126,16 @@ def deleteXML(server: HikVisionServer, path, xmldata=None):
 
 
 def postXML(server: HikVisionServer, path, xmldata=None):
+    """
+    This returns the response of the DVR to the following POST request
+
+    Parameters:
+        server (HikvisionServer): The basic info about the DVR
+        path (str): The ISAPI path that will be executed
+        xmldata (str): This should be formatted using `utils.dict2xml`
+                       This is the data that will be transmitted to the server.
+                       It is optional.
+    """
     headers = {'Content-Type': 'application/xml'}
     responseRaw = requests.post(
         server.address() + path,
@@ -92,6 +149,16 @@ def postXML(server: HikVisionServer, path, xmldata=None):
 
 
 def xml2dict(xml):
+    """
+    Converts string formatted for the DVR to a dict
+
+    Parameters:
+        xml (string): The XML string
+
+    Returns:
+        dictionary (dict): The resulting dictionary
+                           This has `@attrs` in place of the attributes
+    """
     # Taken from https://stackoverflow.com/questions/4255277/
     xslt = b"""<xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -160,6 +227,16 @@ def tree2dict(node):
 
 
 def dict2xml(dictionary):
+    """
+    Converts a dict to a string formatted for the DVR
+
+    Parameters:
+        dictionary (dict): The resulting dictionary
+                           This has `@attrs` in place of the attributes
+
+    Returns:
+        xml (string): The XML string
+    """
     for i in dictionary:
         dictionary[i]["@attrs"].update(
             {"xmlns": "http://www.hikvision.com/ver20/XMLSchema"})
