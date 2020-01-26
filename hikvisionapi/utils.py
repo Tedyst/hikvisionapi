@@ -2,7 +2,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from lxml import etree
 from collections import OrderedDict
-from io import BytesIO, StringIO
+from io import BytesIO
 from xmler import dict2xml as d2xml
 
 
@@ -13,30 +13,78 @@ class HikVisionServer:
         self.port = port
         self.user = user
         self.password = password
-        self.address = self.protocol + "://" + self.host + ":" + str(self.port)
+
+    def address(self):
+        return self.protocol + "://" + self.host + "/ISAPI/"
 
 
-class Response:
-    def __init__(self, statusCode=200):
-        self.statusCode = statusCode
-
-
-def getXML(server: HikVisionServer, ISAPI, xmldata=None):
+def getXML(server: HikVisionServer, path, xmldata=None):
     headers = {'Content-Type': 'application/xml'}
     if xmldata is None:
         responseRaw = requests.get(
-            server.address + ISAPI,
+            server.address() + path,
             headers=headers,
             auth=HTTPBasicAuth(server.user, server.password))
     else:
-        responseRaw = requests.post(
-            server.address + ISAPI,
+        responseRaw = requests.get(
+            server.address() + path,
             data=xmldata,
             headers=headers,
             auth=HTTPBasicAuth(server.user, server.password))
+    if responseRaw.status_code == 401:
+        raise Exception("Wrong username or password")
     responseXML = responseRaw.text
     return responseXML
-    # response=Response(statusCode=responseRaw.status_code)
+
+
+def putXML(server: HikVisionServer, path, xmldata=None):
+    headers = {'Content-Type': 'application/xml'}
+    if xmldata is None:
+        responseRaw = requests.put(
+            server.address() + path,
+            headers=headers,
+            auth=HTTPBasicAuth(server.user, server.password))
+    else:
+        responseRaw = requests.put(
+            server.address() + path,
+            data=xmldata,
+            headers=headers,
+            auth=HTTPBasicAuth(server.user, server.password))
+    if responseRaw.status_code == 401:
+        raise Exception("Wrong username or password")
+    responseXML = responseRaw.text
+    return responseXML
+
+
+def deleteXML(server: HikVisionServer, path, xmldata=None):
+    headers = {'Content-Type': 'application/xml'}
+    if xmldata is None:
+        responseRaw = requests.delete(
+            server.address() + path,
+            headers=headers,
+            auth=HTTPBasicAuth(server.user, server.password))
+    else:
+        responseRaw = requests.delete(
+            server.address() + path,
+            data=xmldata,
+            headers=headers,
+            auth=HTTPBasicAuth(server.user, server.password))
+    if responseRaw.status_code == 401:
+        raise Exception("Wrong username or password")
+    responseXML = responseRaw.text
+    return responseXML
+
+def postXML(server: HikVisionServer, path, xmldata=None):
+    headers = {'Content-Type': 'application/xml'}
+    responseRaw = requests.post(
+        server.address() + path,
+        data=xmldata,
+        headers=headers,
+        auth=HTTPBasicAuth(server.user, server.password))
+    if responseRaw.status_code == 401:
+        raise Exception("Wrong username or password")
+    responseXML = responseRaw.text
+    return responseXML
 
 
 def xml2dict(xml):
@@ -64,6 +112,8 @@ def xml2dict(xml):
     </xsl:template>
 </xsl:stylesheet>
 """
+    if type(xml) == str:
+        xml = bytes(xml, "UTF8")
 
     xmlstr = BytesIO(xml)
     parser = etree.XMLParser(ns_clean=True)
@@ -111,4 +161,3 @@ def dict2xml(dictionary):
             {"xmlns": "http://www.hikvision.com/ver20/XMLSchema"})
     xml = d2xml(dictionary)
     return """<?xml version = "1.0" encoding = "UTF-8" ?>""" + str(xml)
-    # return b"""<?xml version="1.0" encoding="UTF-8" ?>""" + dicttoxml.dicttoxml(dictionary, root=False, attr_type=False)
