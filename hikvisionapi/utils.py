@@ -17,6 +17,8 @@ class HikVisionServer:
     def address(self):
         return self.protocol + "://" + self.host + "/ISAPI/"
 
+    def hostWithAuth(self):
+        return self.user + ":" + self.password + "@" + self.host
 
 def getXML(server: HikVisionServer, path, xmldata=None):
     headers = {'Content-Type': 'application/xml'}

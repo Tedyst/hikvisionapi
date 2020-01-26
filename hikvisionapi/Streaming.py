@@ -77,3 +77,33 @@ def getChannelRTSP(server: utils.HikVisionServer, ChannelID):
     # rtsp://admin:cosica.123@192.168.1.239:554/Streaming/channels/801
     return "rtsp://" + server.user + ":" + server.password + \
         "@" + server.host + ":554/Streaming/channels/" + ChannelID
+
+
+def getPastRecordingsForID(server: utils.HikVisionServer, ChannelID,
+                           startTime="", endTime=""):
+    dictdata = utils.xml2dict(b"""<CMSearchDescription version="1.0" xmlns="http://www.isapi.org/ver20/XMLSchema"> 
+        <searchID>{812F04E0-4089-11A3-9A0C-0305E82C2906}</searchID>
+        <trackIDList>
+        <trackID>9</trackID>
+        <trackID>22</trackID>
+        <trackID>43</trackID>
+        </trackIDList>
+        <timeSpanList>
+        <timeSpan>
+        <startTime>2013-06-10T12:00:00Z</startTime>
+        <endTime>2013-06-10T13:30:00Z</endTime>
+        </timeSpan>
+        </timeSpanList>
+        <contentTypeList>
+        <contentType>video</contentType>
+        </contentTypeList>
+        <maxResults>40</maxResults>
+        <metadataList>
+        <metadataDescriptor>recordType.meta.hikvision.com/motion</metadataDescriptor>
+        </metadataList>
+        </CMSearchDescription>""")
+    dictdata['CMSearchDescription']['trackIDList']['trackID'] = ChannelID
+    dictdata['CMSearchDescription']['timeSpanList']['timeSpan']['startTime'] = startTime
+    dictdata['CMSearchDescription']['timeSpanList']['timeSpan']['endTime'] = endTime
+    data = utils.dict2xml(dictdata)
+    return utils.getXML(server, "ContentMgmt/search", data)
