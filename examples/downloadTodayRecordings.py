@@ -6,7 +6,7 @@ from datetime import datetime
 import re
 import os
 
-server = hikvisionapi.HikVisionServer("192.168.1.239", "admin", "")
+server = hikvisionapi.HikVisionServer("192.168.1.239", "admin", "password")
 
 channelList = hikvisionapi.xml2dict(hikvisionapi.Streaming.getChannels(server))
 
@@ -32,12 +32,15 @@ for channel in channelList['StreamingChannelList']['StreamingChannel']:
         if int(recordings['CMSearchResult']['numOfMatches']) == 0:
             continue
 
+        # This loops from every recording
         recordinglist = recordings['CMSearchResult']['matchList']
         for recording in recordinglist['searchMatchItem']:
             url = recording['mediaSegmentDescriptor']['playbackURI']
             url = url.replace(server.host, server.hostWithAuth())
+            # You can choose your own filename, this is just an example
             name = re.sub(r'[-T\:Z]', '', recording['timeSpan']['startTime'])
-            print("Downloading ", url, " ", name + ".mkv")
-            hikvisionapi.RTSPutils.downloadRTSP(url, name + ".mkv",
+            name = name + ".mkv"
+            print("Started downloading ", name)
+            hikvisionapi.RTSPutils.downloadRTSP(url, name,
                                                 debug=True, force=True)
-            print("Finished downloading", name + ".mkv")
+            print("Finished downloading", name)
