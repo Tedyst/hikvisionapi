@@ -16,3 +16,7 @@ print(dicti['StreamingChannelList']['StreamingChannel'])
 ```
 
 Using `xml2dict` and `dict2xml` you can interface using the ISAPI using a Python-native way. You can look at more examples [here](https://github.com/Tedyst/hikvisionapi/tree/master/examples)
+
+## Licence
+
+HIKVISION is a trademark of Hangzhou Hikvision Digital Technology Co., Ltd. 
