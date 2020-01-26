@@ -20,7 +20,8 @@ def putChannels(server: utils.HikVisionServer, StreamingChannelList):
     It is used to update the properties of streaming channels for the device.
     A StreamingChannelList can be obtained from getChannels()
     """
-    return utils.putXML(server, "Streaming/channels", xmldata=StreamingChannelList)
+    return utils.putXML(server, "Streaming/channels",
+                        xmldata=StreamingChannelList)
 
 
 def postChannels(server: utils.HikVisionServer, StreamingChannelList):
@@ -28,7 +29,8 @@ def postChannels(server: utils.HikVisionServer, StreamingChannelList):
     It is used to add a streaming channel for the device.
     A StreamingChannel can be obtained from getChannels()
     """
-    return utils.postXML(server, "Streaming/channels", xmldata=StreamingChannelList)
+    return utils.postXML(server, "Streaming/channels",
+                         xmldata=StreamingChannelList)
 
 
 def deleteChannels(server: utils.HikVisionServer, StreamingChannelList):
@@ -41,24 +43,25 @@ def deleteChannels(server: utils.HikVisionServer, StreamingChannelList):
 
 def getChannelByID(server: utils.HikVisionServer, ChannelID):
     """
-    It is used to get the properties of a particular streaming channel for the 
-device
+    It is used to get the properties of a particular streaming channel for the
+    device
     """
     return utils.getXML(server, "Streaming/channels/" + ChannelID)
 
 
 def putChannelByID(server: utils.HikVisionServer, ChannelID, StreamingChannel):
     """
-    It is used to get the properties of a particular streaming channel for the 
-device
+    It is used to get the properties of a particular streaming channel for the
+    device
     """
-    return utils.putXML(server, "Streaming/channels/" + ChannelID, StreamingChannel)
+    return utils.putXML(server, "Streaming/channels/" + ChannelID,
+                        StreamingChannel)
 
 
 def deleteChannelByID(server: utils.HikVisionServer, ChannelID):
     """
-    It is used to get the properties of a particular streaming channel for the 
-device
+    It is used to get the properties of a particular streaming channel for the
+    device
     """
     return utils.deleteXML(server, "Streaming/channels/" + ChannelID)
 

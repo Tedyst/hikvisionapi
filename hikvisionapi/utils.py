@@ -74,6 +74,7 @@ def deleteXML(server: HikVisionServer, path, xmldata=None):
     responseXML = responseRaw.text
     return responseXML
 
+
 def postXML(server: HikVisionServer, path, xmldata=None):
     headers = {'Content-Type': 'application/xml'}
     responseRaw = requests.post(
@@ -88,7 +89,7 @@ def postXML(server: HikVisionServer, path, xmldata=None):
 
 
 def xml2dict(xml):
-    # Taken from https://stackoverflow.com/questions/4255277/lxml-etree-xmlparser-remove-unwanted-namespace
+    # Taken from https://stackoverflow.com/questions/4255277/
     xslt = b"""<xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="xml" indent="no"/>

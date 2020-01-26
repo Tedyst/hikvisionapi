@@ -12,4 +12,5 @@ for channel in dicti['StreamingChannelList']['StreamingChannel']:
     if (int(channel['id']) % 10 == 1):
         url = hikvisionapi.Streaming.getChannelRTSP(server, channel['id'])
         print(url)
-        hikvisionapi.RTSPutils.downloadRTSP(url, channel['id'] + ".mp4", seconds=5,  debug=True)
+        hikvisionapi.RTSPutils.downloadRTSP(url, channel['id'] + ".mp4",
+                                            seconds=5, debug=True)
