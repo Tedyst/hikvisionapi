@@ -19,5 +19,3 @@ def downloadRTSP(url, videoName, seconds=9999999, debug=False, force=False):
     if debug is False:
         return ffmpeg.run(stream, capture_stdout=True, capture_stderr=True)
     return ffmpeg.run(stream, capture_stdout=False, capture_stderr=False)
-
-#ffmpeg -i rtsp://admin:cosica.123@192.168.1.239/Streaming/tracks/201/?starttime=20200126T000954Z&endtime=20200126T001005Z&name=00000000043003901&size=12363288 -reorder_queue_size 1000 -rtsp_flags listen -rtsp_transport tcp -stimeout 1000 -t 9999999 -timeout 1000 20200126000954.mp4 
