@@ -1,5 +1,5 @@
 import requests
-from requests.auth import HTTPBasicAuth
+from requests.auth import HTTPDigestAuth
 from lxml import etree
 from collections import OrderedDict
 from io import BytesIO
@@ -54,13 +54,13 @@ def getXML(server: HikVisionServer, path, xmldata=None):
         responseRaw = requests.get(
             server.address() + path,
             headers=headers,
-            auth=HTTPBasicAuth(server.user, server.password))
+            auth=HTTPDigestAuth(server.user, server.password))
     else:
         responseRaw = requests.get(
             server.address() + path,
             data=xmldata,
             headers=headers,
-            auth=HTTPBasicAuth(server.user, server.password))
+            auth=HTTPDigestAuth(server.user, server.password))
     if responseRaw.status_code == 401:
         raise Exception("Wrong username or password")
     responseXML = responseRaw.text
@@ -83,13 +83,13 @@ def putXML(server: HikVisionServer, path, xmldata=None):
         responseRaw = requests.put(
             server.address() + path,
             headers=headers,
-            auth=HTTPBasicAuth(server.user, server.password))
+            auth=HTTPDigestAuth(server.user, server.password))
     else:
         responseRaw = requests.put(
             server.address() + path,
             data=xmldata,
             headers=headers,
-            auth=HTTPBasicAuth(server.user, server.password))
+            auth=HTTPDigestAuth(server.user, server.password))
     if responseRaw.status_code == 401:
         raise Exception("Wrong username or password")
     responseXML = responseRaw.text
@@ -112,13 +112,13 @@ def deleteXML(server: HikVisionServer, path, xmldata=None):
         responseRaw = requests.delete(
             server.address() + path,
             headers=headers,
-            auth=HTTPBasicAuth(server.user, server.password))
+            auth=HTTPDigestAuth(server.user, server.password))
     else:
         responseRaw = requests.delete(
             server.address() + path,
             data=xmldata,
             headers=headers,
-            auth=HTTPBasicAuth(server.user, server.password))
+            auth=HTTPDigestAuth(server.user, server.password))
     if responseRaw.status_code == 401:
         raise Exception("Wrong username or password")
     responseXML = responseRaw.text
@@ -141,7 +141,7 @@ def postXML(server: HikVisionServer, path, xmldata=None):
         server.address() + path,
         data=xmldata,
         headers=headers,
-        auth=HTTPBasicAuth(server.user, server.password))
+        auth=HTTPDigestAuth(server.user, server.password))
     if responseRaw.status_code == 401:
         raise Exception("Wrong username or password")
     responseXML = responseRaw.text
