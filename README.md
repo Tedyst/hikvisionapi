@@ -1,3 +1,8 @@
+This repo has now been migrated to the HikLoad project.
+
+Find it there: https://github.com/Tedyst/HikLoad
+
+
 # A Python library for HikVision ISAPI
 
 This library does not yet include all the ISAPI functions, but you can feel free to add some more!
