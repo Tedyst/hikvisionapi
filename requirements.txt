@@ -16,6 +16,6 @@ pylint==2.4.4
 requests==2.22.0
 six==1.14.0
 typed-ast==1.4.1
-urllib3==1.25.8
+urllib3==1.26.5
 wrapt==1.11.2
 xmler==0.2.0
